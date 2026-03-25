@@ -9,13 +9,26 @@ const criarLivro = async (titulo, autor) => {
   };
 };
 
-listarLivros = async () => {
+const listarLivros = async () => {
   const livros = await Livro.findAll();
   return livros;
 };
 
-const deletarLivro = async (id) => {
-    await Livro.destroy({where: { id }});
-}
+const buscarLivroPorId = async (id) => {
+  const livro = await Livro.findByPk(id);
 
-module.exports = { criarLivro, listarLivros, deletarLivro };
+  if (!livro) {
+    return null;
+  }
+
+  return {
+    id: livro.id,
+    titulo: livro.titulo,
+  };
+};
+
+const deletarLivro = async (id) => {
+  await Livro.destroy({ where: { id } });
+};
+
+module.exports = { criarLivro, listarLivros, buscarLivroPorId, deletarLivro };

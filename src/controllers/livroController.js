@@ -1,4 +1,10 @@
-const { criarLivro, listarLivros, deletarLivro } = require('../services/livroService');
+const {
+    criarLivro,
+    listarLivros,
+    buscarLivroPorId,
+    deletarLivro,
+} = require('../services/livroService');
+const { idParamSchema } = require('../validators/livroSchemas');
 
 const criar = async (req, res) => {
     const { titulo, autor } = req.body;
@@ -13,7 +19,27 @@ const criar = async (req, res) => {
 const listar = async (req, res) => {
     const livros = await listarLivros();
     res.status(200).json(livros);
-}
+};
+
+const buscarPorId = async (req, res, next) => {
+    try {
+        const parseResult = idParamSchema.safeParse(req.params);
+
+        if (!parseResult.success) {
+            return res.status(400).json({ erro: 'Parâmetro id inválido' });
+        }
+
+        const livro = await buscarLivroPorId(parseResult.data.id);
+
+        if (!livro) {
+            return res.status(404).json({ erro: 'Livro não encontrado' });
+        }
+
+        return res.status(200).json(livro);
+    } catch (error) {
+        return next(error);
+    }
+};
 
 const deletar = async (req, res) => {
     const { id } = req.params;
@@ -24,6 +50,6 @@ const deletar = async (req, res) => {
 
     await deletarLivro(id);
     res.status(204).send();
-}
+};
 
-module.exports = { criar, listar, deletar };
+module.exports = { criar, listar, buscarPorId, deletar };
