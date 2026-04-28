@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const apiRoutes = require('../../routes/Routes');
+const emprestimoRoutes = require('../../routes/emprestimoRoutes');
 
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(
@@ -14,6 +15,7 @@ app.use(
 );
 app.use(express.json());
 app.use(apiRoutes);
+app.use('/emprestimos', emprestimoRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.message);
